@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const LeadSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
-    email: { type: String, required: true, unique: true }, // ADD THIS
+    email: { type: String, unique: true }, 
     phone: { type: String, required: true, unique: true },
     countryCode: { type: String, required: true },
     language: { type: String, required: true },
