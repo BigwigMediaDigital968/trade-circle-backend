@@ -123,12 +123,70 @@ export const resendOtp = async (req, res) => {
 export const getAllLeads = async (req, res) => {
   try {
     const leads = await Lead.find()
-      .select("-password -otp -otpExpiry") // hide sensitive fields
+      .select("-password")
       .sort({ createdAt: -1 });
 
     res.json({
       total: leads.length,
       leads,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update lead account status (Admin)
+export const updateLeadAccountStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { accountStatus } = req.body;
+
+    const validStatuses = ["In Process", "Demo Shared", "ID Created"];
+
+    if (!validStatuses.includes(accountStatus)) {
+      return res.status(400).json({
+        message: "Invalid account status",
+      });
+    }
+
+    const lead = await Lead.findById(id);
+
+    if (!lead) {
+      return res.status(404).json({
+        message: "Lead not found",
+      });
+    }
+
+    lead.accountStatus = accountStatus;
+
+    await lead.save();
+
+    res.json({
+      message: "Account status updated successfully",
+      lead,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete lead (Admin)
+export const deleteLead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const lead = await Lead.findById(id);
+
+    if (!lead) {
+      return res.status(404).json({
+        message: "Lead not found",
+      });
+    }
+
+    await Lead.findByIdAndDelete(id);
+
+    res.json({
+      message: "Lead deleted successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

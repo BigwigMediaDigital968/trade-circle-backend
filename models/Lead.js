@@ -8,11 +8,18 @@ const LeadSchema = new mongoose.Schema(
     countryCode: { type: String, required: true },
     language: { type: String, required: true },
     password: { type: String, required: true },
+
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     otpLastSent: { type: Date },
 
     status: { type: String, default: "pending" },
+
+    accountStatus: {
+      type: String,
+      enum: ["In Process", "Demo Shared", "ID Created"],
+      default: "In Process",
+    },
   },
   { timestamps: true }
 );
